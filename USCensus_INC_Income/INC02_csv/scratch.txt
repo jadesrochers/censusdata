@@ -1,0 +1,4 @@
+
+Areaname,GEO_ID,Median_family_income_1969,Median_family_income_1979,Median_family_income_1989,Median_family_income_1999,Median_family_income_2009,Mean_family_income_2009 
+
+Areaname,GEO_ID,Per_capita_income_1969,Per_capita_income_1979,Per_capita_income_1989,Per_capita_income_1999,Per_capita_income_2009 

@@ -1,0 +1,5 @@
+1{
+s/DP05_0001E/Resident_total_population_estimate/g;
+s/DP05_0001PE/Resident_total_population_pct/g;
+}
+
