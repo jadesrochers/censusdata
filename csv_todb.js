@@ -35,7 +35,7 @@ const argv = yargs
   })
   .option('keyvars', {
     alias: 'e',
-    default: 'GEO_ID,Areaname',
+    default: 'GEO_ID,Area_name',
     describe: 'List of variables to use for checking whether row exists'
   })
   .option('dryrun', {
@@ -121,7 +121,7 @@ const processFile = async (settings) => {
 const sortRows = R.curry( async (updateHolder, insertHolder, settings, db, row ) => {
   const exists = await checkLocation(settings, db, row)
   const dupe = await checkExact(settings, db, row)
-  console.log('exists and dupe: ', exists,  dupe)
+  if( ! exists | ! dupe ){console.log('exists and dupe: ', exists,  dupe); console.log('row: ', row)}
   if(exists && ! dupe && ! argv.dryrun){
     updateHolder.add(row)  
   }else if(! exists && ! argv.dryrun){
@@ -149,6 +149,7 @@ const checkExact = R.curry(async (settings, db, row) => {
 
 const updateData = R.curry(async (db, settings, alldata) => {
    console.log('updating data')
+   /* console.log('data to update: ', alldata) */
    // await R.map(updateRow(db, settings))(alldata)
    // Might need to do this if updates are not properly waited for
    await Promise.all(R.map(updateRow(db, settings))(alldata))
