@@ -7,7 +7,7 @@
 
 # Change to the data processing dir for census, download 
 # the relevant census data files
-cd ~/dev/javascript/data_processing/census
+cd ../ 
 curl -O https://www2.census.gov/library/publications/2011/compendia/usa-counties/zip/INC.zip
 
 # unzip the downloads

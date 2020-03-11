@@ -4,7 +4,7 @@
 ## use bea_income_data
 ## db.personal_income.deleteMany({})
 
-cd ~/dev/javascript/data_processing/census
+cd ../
 curl -O https://www2.census.gov/library/publications/2011/compendia/usa-counties/zip/PEN.zip
 curl -O https://www2.census.gov/library/publications/2011/compendia/usa-counties/zip/PIN.zip
 curl -O https://apps.bea.gov/regional/histdata/releases/1118lapi/lapi1118-2.zip 

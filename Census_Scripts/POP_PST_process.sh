@@ -7,7 +7,8 @@
 
 # Change to the data processing dir for census, download 
 # the relevant census data files
-cd ~/dev/javascript/data_processing/census
+cd ../
+
 curl -O https://www2.census.gov/library/publications/2011/compendia/usa-counties/zip/POP.zip
 curl -O  https://www2.census.gov/library/publications/2011/compendia/usa-counties/zip/PST.zip
 
@@ -42,8 +43,6 @@ node csv_todb.js --keyvars "GEO_ID" --db 'census_population_data' --collection '
 
 
 #### Handle income bracket and summary data.
-cd ~/dev/javascript/data_processing/census
-
 rm Census_INC_2011/*
 
 curl -O  https://www2.census.gov/library/publications/2011/compendia/usa-counties/zip/INC.zip
