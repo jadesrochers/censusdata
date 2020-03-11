@@ -1,0 +1,12 @@
+1{
+
+s/,([12][90][0-9][0-9])/,Personal_Income_\1/g;
+
+s/(GeoName|Areaname)/Area_name/g;
+s/GeoFIPS/GEO_ID/g;
+
+# print out only the header
+# p;
+
+}
+

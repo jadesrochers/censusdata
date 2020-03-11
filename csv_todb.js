@@ -51,8 +51,8 @@ const argv = yargs
 console.log('Arguments obj: ', argv)
 
 
-const mongouser='lord_tubbington'
-const mongopass='Cp38h8rssDhOSonU6c61e3XGECyjwfa9AiqEWjB48KYopkXFk969Cuky6K9TQKie5eIVRqxlv5ZC090X'
+const mongouser=fs.readFileSync('./mongouser.txt')'lord_tubbington'
+const mongopass=fs.readFileSync('./mongopass.txt')'Cp38h8rssDhOSonU6c61e3XGECyjwfa9AiqEWjB48KYopkXFk969Cuky6K9TQKie5eIVRqxlv5ZC090X'
 var mongouseruri = encodeURIComponent(mongouser);
 var mongopassuri = encodeURIComponent(mongopass);
 

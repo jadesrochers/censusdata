@@ -1,0 +1,62 @@
+2,10000{
+# Take US as a whole (00000) and turn into US00000
+s/^ "(0{5})",/US\1,/g;
+
+# Add 0400000US onto the start of state GEO ID's.
+s/^ "(([0-9]{2})0{3})",/0400000US\1,/g;
+
+# add 0500000US onto the start county GEO ID's.
+s/^ "([0-9]{2}([0-9][1-9][0-9]|[0-9]{2}[1-9]{1}|[1-9][0-9]{2}))",/0500000US\1,/g;
+
+# Fix alaskan naming to not have the asterix; I think it has to do 
+# with various renaming/changes that have occurred.
+s/AK\*/AK/g;
+
+# Do the same for virginia county + city summary locations
+s/VA\*/VA/g;
+
+# Remove the independent city annotation for VA cities; 
+# it is not part of the official names and screws things up.  
+s/\s*\(Independent City\)\s*//g;
+
+# Change a bunch of the VA summary areas to just be listed as the 
+# county. Since I can't do a breakdown on this, it is just best to 
+# present the full data.
+s/0500000US51901,"Albemarle \+ Charlottesville, VA"/0500000US51003,"Albemarle, VA"/g
+s/0500000US51903,"Alleghany \+ Covington, VA"/0500000US51005,"Alleghany, VA"/g
+s/0500000US51907,"Augusta, Staunton \+ Waynesboro, VA"/0500000US51015,"Augusta, VA"/g
+s/0500000US51911,"Campbell \+ Lynchburg, VA"/0500000US51031,"Campbell, VA"/g
+s/0500000US51913,"Carroll \+ Galax, VA"/0500000US51035,"Carroll, VA"/g
+s/0500000US51918,"Dinwiddie, Colonial Heights \+ Petersburg, VA"/0500000US51053,"Dinwiddie, VA"/g
+s/0500000US51919,"Fairfax, Fairfax City \+ Falls Church, VA"/0500000US51059,"Fairfax, VA"/g
+s/0500000US51921,"Frederick \+ Winchester, VA"/0500000US51069,"Frederick, VA"/g
+s/0500000US51923,"Greensville \+ Emporia, VA"/0500000US51081,"Greensville, VA"/g
+s/0500000US51929,"Henry \+ Martinsville, VA"/0500000US51089,"Henry, VA"/g
+s/0500000US51931,"James City \+ Williamsburg, VA"/0500000US51095,"James City, VA/g
+s/0500000US51933,"Montgomery \+ Radford, VA"/0500000US51121,"Montgomery, VA"/g
+s/0500000US51939,"Pittsylvania \+ Danville, VA"/0500000US51143,"Pittsylvania, VA"/g
+s/0500000US51941,"Prince George \+ Hopewell, VA"/0500000US51149,"Prince George, VA"/g
+s/0500000US51942,"Prince William, Manassas \+ Manassas Park, VA"/0500000US51153,"Prince William, VA"/g
+s/0500000US51944,"Roanoke \+ Salem, VA"/0500000US51944,"Roanoke, VA"/g
+s/0500000US51945,"Rockbridge, Buena Vista \+ Lexington, VA"/0500000US51163,"Rockbridge, VA"/g
+s/0500000US51947,"Rockingham \+ Harrisonburg, VA"/0500000US51165,"Rockingham, VA"/g
+s/0500000US51949,"Southampton \+ Franklin, VA"/0500000US51175,"Southampton, VA"/g
+s/0500000US51951,"Spotsylvania \+ Fredericksburg, VA"/0500000US51177,"Spotsylvania, VA"/g
+s/0500000US51953,"Washington \+ Bristol, VA"/0500000US51191,"Washington, VA"/g
+s/0500000US51955,"Wise \+ Norton, VA"/0500000US51195,"Wise, VA"/g
+s/0500000US51958,"York \+ Poquoson, VA"/0500000US51199,"York, VA"/g
+
+
+# One stray entry for wisconsin to fix; indicates one unit inside another  
+# but is not listed this way anywhere else
+s/\s*\(includes Menominee\)\s*//g;
+s/WI\*/WI/g;
+
+# Get rid of all other asterix
+s/\*//g;
+
+# print the first two values in each line
+# s/(([^,]*,){3}).*/\1/g;
+# /^./{ p; }
+}
+
