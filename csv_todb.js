@@ -38,6 +38,11 @@ const argv = yargs
     default: 'GEO_ID,Area_name',
     describe: 'List of variables to use for checking whether row exists'
   })
+  .option('mongoport', {
+    alias: 'p',
+    default: '27017',
+    describe: 'Port to access mongodb at'
+  })
   .option('dryrun', {
     alias: 'r',
     type: 'boolean',
@@ -51,13 +56,14 @@ const argv = yargs
 console.log('Arguments obj: ', argv)
 
 
-const mongouser=fs.readFileSync('./mongouser.txt')'lord_tubbington'
-const mongopass=fs.readFileSync('./mongopass.txt')'Cp38h8rssDhOSonU6c61e3XGECyjwfa9AiqEWjB48KYopkXFk969Cuky6K9TQKie5eIVRqxlv5ZC090X'
-var mongouseruri = encodeURIComponent(mongouser);
-var mongopassuri = encodeURIComponent(mongopass);
+const mongouser=fs.readFileSync('./mongo_censususer.txt', "utf8")
+const mongopass=fs.readFileSync('./mongo_censuspass.txt', "utf8")
+console.log('mongouser, mongopass, mongoport: ', mongouser, mongopass, argv.mongoport)
+var mongouseruri = encodeURIComponent(mongouser.replace(/(\r\n|\n|\r)/gm, ""));
+var mongopassuri = encodeURIComponent(mongopass.replace(/(\r\n|\n|\r)/gm, ""));
 
 // remember to use localhost instead of service name
-urldb = `mongodb://${mongouseruri}:${mongopassuri}@localhost:27017/admin?authMechanism=SCRAM-SHA-1&authSource=admin`
+urldb = `mongodb://${mongouseruri}:${mongopassuri}@localhost:${argv.mongoport}/admin?authMechanism=SCRAM-SHA-1&authSource=admin`
 // let settings = { database: database, dburl: dburl }
 // var db = await mongosimple.mongoMaker(settings);
 
@@ -119,13 +125,16 @@ const processFile = async (settings) => {
 }
 
 const sortRows = R.curry( async (updateHolder, insertHolder, settings, db, row ) => {
+  const hasvars = checkVars(settings, row)
   const exists = await checkLocation(settings, db, row)
   const dupe = await checkExact(settings, db, row)
-  if( ! exists | ! dupe ){console.log('exists and dupe: ', exists,  dupe); console.log('row: ', row)}
-  if(exists && ! dupe && ! argv.dryrun){
-    updateHolder.add(row)  
-  }else if(! exists && ! argv.dryrun){
-    insertHolder.add(row)
+  if( ! exists | ! dupe ){
+    console.log('exists, dupe and hasvars: ', exists,  dupe, hasvars); console.log('row: ', row)
+  }
+  if(exists && ! dupe && hasvars && ! argv.dryrun){
+    await updateHolder.add(row)  
+  }else if(! exists && hasvars && ! argv.dryrun){
+    await insertHolder.add(row)
   }
 })
 
@@ -134,6 +143,15 @@ const checkvals = (row) => {
   const rslt = R.mergeAll(checks)
   return rslt
 }
+
+const checkVars = R.curry((settings, row) => {
+  /* let name = row.Area_name */
+  const checkkeys = R.map((key) => (R.has(key, row) && ! R.isEmpty(row[key])), settings.include)
+  /* console.log('checkkeys; has required keys with values: ', checkkeys) */
+  const haskeys = R.all((n) => (n === true), checkkeys)
+  /* console.log('haskeys: ', haskeys) */
+  return haskeys
+})
 
 const checkLocation = R.curry(async (settings, db, row) => {
   /* let name = row.Area_name */

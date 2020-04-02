@@ -12,6 +12,11 @@ cd ../
 curl -O https://www2.census.gov/library/publications/2011/compendia/usa-counties/zip/POP.zip
 curl -O  https://www2.census.gov/library/publications/2011/compendia/usa-counties/zip/PST.zip
 
+# remove existing files
+rm Census_POP_2011/*
+rm Census_PST_2011/*
+rm Census_INC_2011/*
+
 # unzip the downloads
 unzip POP.zip -d Census_POP_2011
 unzip PST.zip -d Census_PST_2011
@@ -34,11 +39,9 @@ sed -r -i.oldgeoids -f Census_Scripts/PST_geoidedit_sed.txt Census_PST_2011/PST0
 
 
 # Get all the correct locations inserted using the two census source
-node csv_todb.js --keyvars "GEO_ID" --db 'census_population_data' --collection 'population_totals' --vars 'GEO_ID,Area_name' 'Census_POP_2011/POP01.csv.0'
-node csv_todb.js --keyvars "GEO_ID" --db 'census_population_data' --collection 'population_estimates' --vars 'GEO_ID,Area_name' 'Census_PST_2011/PST01.csv.0'
-node csv_todb.js --keyvars "GEO_ID" --db 'census_population_data' --collection 'population_estimates' --vars 'GEO_ID,Area_name' 'Census_BEA_PIN_2011/PIN01.csv.0'
-
-
+node csv_todb.js -p 27017 --keyvars "GEO_ID" --db 'census_population_data' --collection 'population_totals' --vars 'GEO_ID,Area_name' 'Census_POP_2011/POP01.csv.0'
+node csv_todb.js -p 27017 --keyvars "GEO_ID" --db 'census_population_data' --collection 'population_estimates' --vars 'GEO_ID,Area_name' 'Census_PST_2011/PST01.csv.0'
+node csv_todb.js -p 27017 --keyvars "GEO_ID" --db 'census_population_data' --collection 'population_estimates' --vars 'GEO_ID,Area_name' 'Census_BEA_PIN_2011/PIN01.csv.0'
 
 
 
@@ -61,26 +64,26 @@ sed -r -i.oldgeoids -f Census_Scripts/INC_geoidedit_sed.txt Census_INC_2011/INC0
 
 # Insert locations for the income range and summary data
 ## Sometimes have to run these x2 for some reason to get stragglers
-node csv_todb.js --keyvars "GEO_ID" --db 'census_income_data' --collection 'income_brackets' --vars 'GEO_ID,Area_name' 'Census_INC_2011/INC01.csv.0'
-node csv_todb.js --keyvars "GEO_ID" --db 'census_income_data' --collection 'income_summary' --vars 'GEO_ID,Area_name' 'Census_INC_2011/INC01.csv.0'
+node csv_todb.js -p 27017 --keyvars "GEO_ID" --db 'census_income_data' --collection 'income_brackets' --vars 'GEO_ID,Area_name' 'Census_INC_2011/INC01.csv.0'
+node csv_todb.js -p 27017 --keyvars "GEO_ID" --db 'census_income_data' --collection 'income_summary' --vars 'GEO_ID,Area_name' 'Census_INC_2011/INC01.csv.0'
 
 # First the income summary data
-node csv_todb.js --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_summary' --vars 'Areaname,GEO_ID,Median_household_income_1979,Median_household_income_1989,Median_household_income_1999,Median_household_income_2009,Mean_household_income_2009' 'Census_INC_2011/INC01.csv.0'
-node csv_todb.js --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_summary' --vars 'Areaname,GEO_ID,Median_family_income_1969,Median_family_income_1979,Median_family_income_1989,Median_family_income_1999,Median_family_income_2009,Mean_family_income_2009' 'Census_INC_2011/INC02.csv.0'
-node csv_todb.js --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_summary' --vars         'Areaname,GEO_ID,Per_capita_income_1969,Per_capita_income_1979,Per_capita_income_1989,Per_capita_income_1999,Per_capita_income_2009'   'Census_INC_2011/INC02.csv.9'
+node csv_todb.js -p 27017 --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_summary' --vars 'Areaname,GEO_ID,Median_household_income_1979,Median_household_income_1989,Median_household_income_1999,Median_household_income_2009,Mean_household_income_2009' 'Census_INC_2011/INC01.csv.0'
+node csv_todb.js -p 27017 --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_summary' --vars 'Areaname,GEO_ID,Median_family_income_1969,Median_family_income_1979,Median_family_income_1989,Median_family_income_1999,Median_family_income_2009,Mean_family_income_2009' 'Census_INC_2011/INC02.csv.0'
+node csv_todb.js -p 27017 --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_summary' --vars         'Areaname,GEO_ID,Per_capita_income_1969,Per_capita_income_1979,Per_capita_income_1989,Per_capita_income_1999,Per_capita_income_2009'   'Census_INC_2011/INC02.csv.9'
 
 # And now the bracket data
-node csv_todb.js --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_brackets' --vars     'GEO_ID,Areaname,Households_with_incomelessthan_10k_1979,Households_with_incomelessthan_10k_1989,Households_with_incomelessthan_10k_1999,Households_with_incomelessthan_10k_2009'  'Census_INC_2011/INC01.csv.0'
+node csv_todb.js -p 27017 --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_brackets' --vars     'GEO_ID,Areaname,Households_with_incomelessthan_10k_1979,Households_with_incomelessthan_10k_1989,Households_with_incomelessthan_10k_1999,Households_with_incomelessthan_10k_2009'  'Census_INC_2011/INC01.csv.0'
 
-node csv_todb.js --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_brackets' --vars   'Areaname,GEO_ID,Households_with_income_10to15k_1979,Households_with_income_10to15k_1989,Households_with_income_10to15k_1999,Households_with_income_10to15k_2009,Households_with_income_15to20k_1979,Households_with_income_15to20k_1989,Households_with_income_15to20k_1999,Households_with_income_15to20k_2009,Households_with_income_20to25k_1979,Households_with_income_20to25k_1989' 'Census_INC_2011/INC01.csv.1'
+node csv_todb.js -p 27017 --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_brackets' --vars   'Areaname,GEO_ID,Households_with_income_10to15k_1979,Households_with_income_10to15k_1989,Households_with_income_10to15k_1999,Households_with_income_10to15k_2009,Households_with_income_15to20k_1979,Households_with_income_15to20k_1989,Households_with_income_15to20k_1999,Households_with_income_15to20k_2009,Households_with_income_20to25k_1979,Households_with_income_20to25k_1989' 'Census_INC_2011/INC01.csv.1'
 
-node csv_todb.js --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_brackets' --vars     'Areaname,GEO_ID,Households_with_income_20to25k_1999,Households_with_income_20to25k_2009,Households_with_income_25to30k_1979,Households_with_income_25to30k_1989,Households_with_income_25to30k_1999,Households_with_income_25to30k_2009,Households_with_income_30to35k_1979,Households_with_income_30to35k_1989,Households_with_income_30to35k_1999,Households_with_income_30to35k_2009'  'Census_INC_2011/INC01.csv.2'
+node csv_todb.js -p 27017 --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_brackets' --vars     'Areaname,GEO_ID,Households_with_income_20to25k_1999,Households_with_income_20to25k_2009,Households_with_income_25to30k_1979,Households_with_income_25to30k_1989,Households_with_income_25to30k_1999,Households_with_income_25to30k_2009,Households_with_income_30to35k_1979,Households_with_income_30to35k_1989,Households_with_income_30to35k_1999,Households_with_income_30to35k_2009'  'Census_INC_2011/INC01.csv.2'
 
-node csv_todb.js --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_brackets' --vars     'Areaname,GEO_ID,Households_with_income_35to40k_1979,Households_with_income_35to40k_1989,Households_with_income_35to40k_1999,Households_with_income_35to40k_2009,Households_with_income_40to50k_1979,Households_with_income_40to50k_1989,Households_with_income_40to50k_1999,Households_with_income_40to45k_1989,Households_with_income_40to45k_1999,Households_with_income_40to45k_2009' 'Census_INC_2011/INC01.csv.3'
+node csv_todb.js -p 27017 --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_brackets' --vars     'Areaname,GEO_ID,Households_with_income_35to40k_1979,Households_with_income_35to40k_1989,Households_with_income_35to40k_1999,Households_with_income_35to40k_2009,Households_with_income_40to50k_1979,Households_with_income_40to50k_1989,Households_with_income_40to50k_1999,Households_with_income_40to45k_1989,Households_with_income_40to45k_1999,Households_with_income_40to45k_2009' 'Census_INC_2011/INC01.csv.3'
 
-node csv_todb.js --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_brackets' --vars      'Areaname,GEO_ID,Households_with_income_45to50k_1989,Households_with_income_45to50k_1999,Households_with_income_45to50k_2009,Households_with_income_50to75k_1979,Households_with_income_50to75k_1989,Households_with_income_50to75k_1999,Households_with_income_50to60k_1989,Households_with_income_50to60k_1999,Households_with_income_50to60k_2009,Households_with_income_60to75k_1989' 'Census_INC_2011/INC01.csv.4'
+node csv_todb.js -p 27017 --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_brackets' --vars      'Areaname,GEO_ID,Households_with_income_45to50k_1989,Households_with_income_45to50k_1999,Households_with_income_45to50k_2009,Households_with_income_50to75k_1979,Households_with_income_50to75k_1989,Households_with_income_50to75k_1999,Households_with_income_50to60k_1989,Households_with_income_50to60k_1999,Households_with_income_50to60k_2009,Households_with_income_60to75k_1989' 'Census_INC_2011/INC01.csv.4'
 
-node csv_todb.js --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_brackets' --vars       'Areaname,GEO_ID,Households_with_income_60to75k_1999,Households_with_income_60to75k_2009,Households_with_incomegreaterthan_75k_1979,Households_with_incomegreaterthan_75k_1989,Households_with_incomegreaterthan_75k_1999,Households_with_income_75to100k_1989,Households_with_income_75to100k_1999,Households_with_income_75to100k_2009,Households_with_income_100to125k_1989,Households_with_income_100to125k_1999'  'Census_INC_2011/INC01.csv.5'
+node csv_todb.js -p 27017 --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_brackets' --vars       'Areaname,GEO_ID,Households_with_income_60to75k_1999,Households_with_income_60to75k_2009,Households_with_incomegreaterthan_75k_1979,Households_with_incomegreaterthan_75k_1989,Households_with_incomegreaterthan_75k_1999,Households_with_income_75to100k_1989,Households_with_income_75to100k_1999,Households_with_income_75to100k_2009,Households_with_income_100to125k_1989,Households_with_income_100to125k_1999'  'Census_INC_2011/INC01.csv.5'
 
 node csv_todb.js --keyvars "GEO_ID,Areaname" --db 'census_income_data' --collection 'income_brackets' --vars      'Areaname,GEO_ID,Households_with_income_100to125k_2009,Households_with_income_125to150k_1989,Households_with_income_125to150k_1999,Households_with_income_125to150k_2009,Households_with_incomegreaterthan_150k_1989,Households_with_incomegreaterthan_150k_1999,Households_with_income_150to200k_1999,Households_with_income_150to200k_2009,Households_with_incomegreaterthan_200k_1999,Households_with_incomegreaterthan_200k_2009'  'Census_INC_2011/INC01.csv.6'
 
