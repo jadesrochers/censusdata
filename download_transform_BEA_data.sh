@@ -47,7 +47,11 @@ curl -X GET -o dl_bea_dataset_CAINC1.json -L "http://apps.bea.gov/api/data?UserI
 # Explained: This command makes a header row.
 # Then, it gets the data in the Data array and sorts it, returning an array.
 # Finally, it extracts data from that array and makes the rows.
-jq -r '["GeoFips", "GeoName", "TimePeriod", .BEAAPI.Results.Data[1].Code], (.BEAAPI.Results.Data | sort_by(.GeoFips,.TimePeriod)[] | [.GeoFips, .GeoName, .TimePeriod, .DataValue]) | @csv' < dl_bea_dataset_CAINC1_pretty.json  > testcsv.csv
+jq -r '["GeoFips", "GeoName", "TimePeriod", .BEAAPI.Results.Data[0].Code], (.BEAAPI.Results.Data | sort_by(.GeoFips,.TimePeriod)[] | [.GeoFips, .GeoName, .TimePeriod, .DataValue]) | @csv' < dl_bea_dataset_CAINC1_pretty.json  > CAINC1_NY_LineCode1.csv
+
+## Get mulitple linecode data and combine with paste
+# The cli paste command would work something like this:
+# paste -d ',' file1 file2
 
 ## Get the series defined above. Upgrade this to pass as an argument to improve.
 # get_series_data 
