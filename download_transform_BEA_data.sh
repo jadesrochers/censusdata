@@ -43,6 +43,11 @@ jq < dl_bea_dataset_parameter_args.json
 ## Now get the data:
 curl -X GET -o dl_bea_dataset_CAINC1.json -L "http://apps.bea.gov/api/data?UserID=74B6144A-CFBF-48F9-9A6E-F50213F7FA39&method=GetData&datasetname=Regional&GeoFips=NY&TableName=CAINC1&LineCode=1,2,3&Year=All&ResultFormat=JSON"
 
+## And transform JSON > csv so I can pull it into python
+# Explained: This command makes a header row.
+# Then, it gets the data in the Data array and sorts it, returning an array.
+# Finally, it extracts data from that array and makes the rows.
+jq -r '["GeoFips", "GeoName", "TimePeriod", .BEAAPI.Results.Data[1].Code], (.BEAAPI.Results.Data | sort_by(.GeoFips,.TimePeriod)[] | [.GeoFips, .GeoName, .TimePeriod, .DataValue]) | @csv' < dl_bea_dataset_CAINC1_pretty.json  > testcsv.csv
 
 ## Get the series defined above. Upgrade this to pass as an argument to improve.
 # get_series_data 
