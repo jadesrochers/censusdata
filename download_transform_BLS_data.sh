@@ -7,8 +7,10 @@
 # curl -X POST -o testdata.json -L 'https://api.bls.gov/publicAPI/v2/timeseries/data/?registrationkey=525f29f0b0514e04aee57cd2458939ad&startyear=1950&endyear=1969' -H 'Content-Type: application/json' -d '{"seriesid":["LNU02300000"], "startyear":"1950", "endyear":"1969", "registrationkey":"525f29f0b0514e04aee57cd2458939ad" }'
 
 # same request but get xlsx data.
-## NOTE: Their example is wrong with this endpoint, use /data.xlsx/ and not /data/.xlsx
+## NOTE: Their example is wrong with the data endpoint
+# use /data.xlsx/ and not /data/.xlsx
 seriesid='LNU02300000'
+
 # curl -X POST -o testdata.xlsx -L 'https://api.bls.gov/publicAPI/v2/timeseries/data.xlsx/?registrationkey=525f29f0b0514e04aee57cd2458939ad&startyear=1950&endyear=1969' -H 'Content-Type: application/json' -d '{"seriesid":["LNU02300000"], "startyear":"1950", "endyear":"1969", "registrationkey":"525f29f0b0514e04aee57cd2458939ad" }'
 # xlsx2csv -a testdata.xlsx > testdata.csv
 # sed -n -r '/^[12][0-9]{3}/,${p}' < testdata.csv | tac
